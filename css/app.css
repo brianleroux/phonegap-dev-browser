@@ -11,14 +11,12 @@ body {
 }
 
 h1 {
-	font-size:x-large;
+	font-size:large;
 	font-weight:normal;
 	margin:0;
 	padding:20px;
 	color:#fff;
 	text-shadow: 0px -1px 0px #374683;
-	/*background-image: url('bg.gif');
-	background-repeat:repeat-x;*/
 	background:url('../bg.gif');
 	display:block;
 }
