@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>PhoneGap/Developer</title>
+    <link rel="stylesheet" href="css/app.css" type="text/css">
+</head>
+<body>
+
+<h1>Phone<strong>Gap</strong>/Developer</h1> 
+<div id="wrap">
+	<div id="nav" class="card"> 
+	    <ul>
+	        <li id="show-docs"><a href="http://docs.phonegap.com">docs</a></li>
+	        <li id="show-spec"><a href="http://mobile-spec.com">spec</a></li>
+	        <li id="show-bookmarks"><a href="#bookmarks">bookmarks</a></li>
+	    </ul>
+	</div>
+
+	<div id="bookmarks" class="card">
+	    <a id="add-bookmark">Add a new bookmark</a>
+	    <ul></ul>
+	</div>
+
+	<div id="new-bookmark" class="card">
+	    <form action="#save-new-bookmark">
+	        <label>Title <input type="text" id="new-bookmark-title" /></label><br />
+	        <label>URL <input type="text" id="new-bookmark-url" /></label><br />
+	        <button>Save</button>
+	    </form>
+	</div>
+</div>
+
+<!-- lets do this thing -->
+<script type="text/javascript" charset="utf-8" src="phonegap.js"></script>	  
+<script type="text/javascript" charset="utf-8" src="js/xui.js"></script>	
+<script type="text/javascript" charset="utf-8" src="js/lawnchair/adaptors/LawnchairAdaptorHelpers.js"></script>  
+<script type="text/javascript" charset="utf-8" src="js/lawnchair/adaptors/DOMStorageAdaptor.js"></script>  
+<script type="text/javascript" charset="utf-8" src="js/lawnchair/Lawnchair.js"></script>  
+<script type="text/javascript" charset="utf-8">
+// prevent user touch events
+x$('body')[0].addEventListener('touchstart', function(e){ if (e.target.tagName != 'INPUT') { e.preventDefault() }}, true);
+
+// wait until the app loads to get magical
+x$(window).load(function(){
+	x$(document).on('deviceready', function(){
+
+		var level = 0 
+		  , bookmarks = new Lawnchair({adaptor:'dom'});
+	
+		var tweenTo = function(level) {
+			var levels = ['20px', '-290px', '-600px'];
+			x$('#wrap').tween({'left':levels[level]})
+		};
+	
+		// helper for rendering: GUESS! 
+		var renderBookmarks = function() {
+			// remove all bookmarks
+			// FIXME remove should not fail on undefined
+			try { 
+				x$('#bookmarks ul li').remove();
+			} catch(e) {}
+			// add all bookmarks from lawnchair to the dom
+			bookmarks.each(function(b){
+				var tmpl = '<li><a class="bookmark" href="' + b.url + '">' + b.title + '</a> <a id="' + b.key + '" class="delete">x</a></li>';
+		        x$('#bookmarks ul').bottom(tmpl)
+		    });		
+			// bind deletes
+			x$('.delete').touchstart(function(e) {
+				bookmarks.remove({key:x$(this).attr('id')}); // FIXME lawnchair should accept callback for remove
+				x$('#bookmarks ul')[0].removeChild(x$(this)[0].parentNode)
+			});
+			// rebind all the anchors to touchstarts
+			x$('a').each(function(){
+				var a = x$(this), u = a.attr('href').toString();
+				if (u.match(/http/)) {
+					a.touchstart(function(e){
+						e.preventDefault();
+						BackButton.reset(); // preserving the back button in android
+						window.location = u;
+						return false;
+					});
+				};
+			});
+		};
+     
+		// attach navigation to the bookmarks view
+	   	x$('#show-bookmarks a').touchstart(function(e){
+			e.preventDefault();
+			level = 1;
+			tweenTo(level);
+			return false;
+		});
+	
+		// attach nav to the new bookmark
+		x$('#add-bookmark').touchstart(function(e){
+			e.preventDefault();
+			level = 2;
+			tweenTo(level);
+			return false;
+		});
+	
+		// capture android back events
+		if (device.platform == 'Android') {
+			BackButton.override();
+			x$(document).on('backKeyDown', function(){
+				if (level > 0) {
+					level = level - 1;
+					tweenTo(level)
+				} else {
+					BackButton.exitApp();
+				}
+			});
+		};
+
+		// save bookmark functionality
+		x$('#new-bookmark form').on('submit', function(e){
+			e.preventDefault();
+			var title = x$('#new-bookmark-title')[0].value
+			  ,	url = x$('#new-bookmark-url')[0].value
+			  ;
+	        if (title == '' || url == '') {
+				alert('title and/or url not complete!')
+			} else {
+				bookmarks.save({title:title, url:url}, function() {
+					renderBookmarks();
+					
+					x$('#new-bookmark-title')[0].value = '';
+					x$('#new-bookmark-url')[0].value = '';
+					
+					tweenTo(0);
+				}); 
+			} 
+			return false;
+		});
+	
+		renderBookmarks();
+		
+	/// --- end device ready	
+	});
+});	
+</script>
+</body>
+</html>

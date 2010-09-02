@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<widget xmlns="http://www.w3.org/ns/widgets" 
+    xmlns:android   ="http://ns.phonegap.com/android" 
+    id              ="http://phonegap.com/developer" 
+    version         ="0.0.1">
+    
+    <!-- app settings -->    
+    <name short="PhoneGap Dev Browser">PhoneGap Dev Browser</name>
+    <description>An example widget that demonstrates the PhoneGap API.</description>
+    <icon src="icon.png"/>
+    <content src="index.html"/>
+    
+    <!-- this is where phonegap.js is copied / goes into root by default-->
+    <preference name="javascript_folder" value="js" /> 
+        
+    <!-- 
+    TODO: use feature element to turn on/off device capabilities
+	TODO: map in android manifest stuff
+    <feature name="http://example.com/camera"><param name="autofocus" value="true"/></feature>
+    <preference name="apikey" value="ea31ad3a23fd2f" readonly="true" />
+    -->
+
+    <author href ="http://westcoastlogic.com/" email="brian@nitobi.com">Brian LeRoux</author>
+
+    <license>
+    Copyright (c) 2010 Brian LeRoux.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    INSULT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    </license>
+</widget>
