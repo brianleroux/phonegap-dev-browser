@@ -19,14 +19,14 @@
 	</div>
 
 	<div id="bookmarks" class="card">
-	    <a id="add-bookmark">Add a new bookmark</a>
+	    <a id="add-bookmark">new bookmark</a>
 	    <ul></ul>
 	</div>
 
 	<div id="new-bookmark" class="card">
 	    <form action="#save-new-bookmark">
 	        <label>Title <input type="text" id="new-bookmark-title" /></label><br />
-	        <label>URL <input type="text" id="new-bookmark-url" /></label><br />
+	        <label>URL <input type="text" id="new-bookmark-url" value="http://"/></label><br />
 	        <button>Save</button>
 	    </form>
 	</div>
@@ -127,7 +127,7 @@ x$(window).load(function(){
 					renderBookmarks();
 					
 					x$('#new-bookmark-title')[0].value = '';
-					x$('#new-bookmark-url')[0].value = '';
+					x$('#new-bookmark-url')[0].value = 'http://';
 					
 					tweenTo(0);
 				}); 

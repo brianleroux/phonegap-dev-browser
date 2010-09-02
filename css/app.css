@@ -17,8 +17,9 @@ h1 {
 	padding:20px;
 	color:#fff;
 	text-shadow: 0px -1px 0px #374683;
-	background-image: url('bg.gif');
-	background-repeat:repeat-x;
+	/*background-image: url('bg.gif');
+	background-repeat:repeat-x;*/
+	background:url('../bg.gif');
 	display:block;
 }
 
@@ -69,6 +70,9 @@ label {
     letter-spacing:-1;
     color:#ccc;
     float:left;
+	margin:0;
+	padding:0;
+	text-align:left;
 }
 
 button {
@@ -96,4 +100,8 @@ button {
 	width:1500px;
 	height:600px;
 	overflow:none;
+}
+
+#add-bookmark {
+	margin:30px 0 0 0;
 }
