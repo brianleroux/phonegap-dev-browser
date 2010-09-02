@@ -17,6 +17,7 @@ Currently only for PhoneGap/Android and, for the moment, requires brianleroux's 
 Coming soon...
 ---
 - app store url
+- submodule in mobile-spec
 - iPhone port
 - Blackberry port
 
