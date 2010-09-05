@@ -13,7 +13,7 @@
 	<div id="nav" class="card"> 
 	    <ul>
 	        <li id="show-docs"><a href="http://docs.phonegap.com">docs</a></li>
-	        <li id="show-spec"><a href="http://mobile-spec.com">spec</a></li>
+	        <li id="show-spec"><a href="#specs">specs</a></li>
 	        <li id="show-bookmarks"><a href="#bookmarks">bookmarks</a></li>
 	    </ul>
 	</div>
@@ -25,7 +25,6 @@
 
 	<div id="new-bookmark" class="card">
 	    <form action="#save-new-bookmark">
-	        <label>Title <input type="text" id="new-bookmark-title" /></label><br />
 	        <label>URL <input type="text" id="new-bookmark-url" value="http://"/></label><br />
 	        <button>Save</button>
 	    </form>
@@ -96,6 +95,12 @@ x$(window).load(function(){
 			e.preventDefault();
 			level = 1;
 			tweenTo(level);
+			return false;
+		});
+		
+		x$('#specs a').touchstart(function(e){
+			e.preventDefault();
+			window.location = 'mobile-spec/index.html';
 			return false;
 		});
 	
