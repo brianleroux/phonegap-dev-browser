@@ -17,7 +17,7 @@ h1 {
 	padding:20px;
 	color:#fff;
 	text-shadow: 0px -1px 0px #374683;
-	background:url('../bg.gif');
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#434241), to(#262524));
 	display:block;
 }
 
@@ -31,16 +31,18 @@ a {
 	text-align:left;
 }
 
-a.bookmark {
-	float:left;
+table {
+	width:100%;
 }
 
 a.delete {
+	padding:10px;
+	width:15px;
+	height:15px;
+	float:right;
 	-webkit-border-radius:10px;
 	background:#333;
 	color:#ccc;
-	padding:10px;
-	float:right;
 	text-shadow: 0px 1px 0px #e5e5ee;
 }
 
@@ -52,7 +54,6 @@ ul {
 
 li {
     padding:30px;
-    border-bottom:1px solid #333;
 } 
 
 input {
@@ -73,17 +74,6 @@ label {
 	text-align:left;
 }
 
-button {
-    width:100%;
-    height:60px; 
-    font-size:larger;
-    border:none;
-    -webkit-border-radius:20px;
-    text-transform:uppercase;
-    color:#333;
-    letter-spacing:-5;
-}
-
 .card {
 	width:250px;
     min-height:340px;
@@ -101,5 +91,5 @@ button {
 }
 
 #add-bookmark {
-	margin:30px 0 0 0;
+	margin:20px 0 20px 20px;
 }

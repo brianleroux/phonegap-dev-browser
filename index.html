@@ -13,20 +13,19 @@
 	<div id="nav" class="card"> 
 	    <ul>
 	        <li id="show-docs"><a href="http://docs.phonegap.com">docs</a></li>
-	        <li id="show-spec"><a href="#specs">specs</a></li>
+	        <li id="show-specs"><a href="#specs">specs</a></li>
 	        <li id="show-bookmarks"><a href="#bookmarks">bookmarks</a></li>
 	    </ul>
 	</div>
 
 	<div id="bookmarks" class="card">
-	    <a id="add-bookmark">new bookmark</a>
-	    <ul></ul>
+	    <a id="add-bookmark">new bookmark...</a>
+	    <table></table>
 	</div>
 
 	<div id="new-bookmark" class="card">
 	    <form action="#save-new-bookmark">
 	        <label>URL <input type="text" id="new-bookmark-url" value="http://"/></label><br />
-	        <button>Save</button>
 	    </form>
 	</div>
 </div>
@@ -38,58 +37,79 @@
 <script type="text/javascript" charset="utf-8" src="js/lawnchair/adaptors/DOMStorageAdaptor.js"></script>  
 <script type="text/javascript" charset="utf-8" src="js/lawnchair/Lawnchair.js"></script>  
 <script type="text/javascript" charset="utf-8">
-// prevent user touch events
-x$('body')[0].addEventListener('touchstart', function(e){ if (e.target.tagName != 'INPUT') { e.preventDefault() }}, true);
+var App = function() {
+	var self 	  = this
+	  , level 	  = 0 
+	  , bookmarks = new Lawnchair({adaptor:'dom'});
 
-// wait until the app loads to get magical
-x$(window).load(function(){
-	x$(document).on('deviceready', function(){
-
-		var level = 0 
-		  , bookmarks = new Lawnchair({adaptor:'dom'});
+	var tweenTo = function(level) {
+		var levels = ['20px', '-290px', '-600px'];
+		x$('#wrap').tween({'left':levels[level]})
+	};
 	
-		var tweenTo = function(level) {
-			var levels = ['20px', '-290px', '-600px'];
-			x$('#wrap').tween({'left':levels[level]})
-		};
+	var saveBookmark = function() {
+		var url = x$('#new-bookmark-url')[0].value;
+        if (url == '') {
+			alert('Url not complete!')
+		} else {
+			bookmarks.save({url:url}, function() {
+				renderBookmarks();
+				x$('#new-bookmark-url')[0].value = 'http://';
+				x$('#new-bookmark-url')[0].blur();
+				tweenTo(1);
+			}); 
+		}
+	};
 	
-		// helper for rendering: GUESS! 
-		var renderBookmarks = function() {
-			// remove all bookmarks
-			// FIXME remove should not fail on undefined
-			try { 
-				x$('#bookmarks ul li').remove();
-			} catch(e) {}
-			// add all bookmarks from lawnchair to the dom
-			bookmarks.each(function(b){
-				var tmpl = '<li><a class="bookmark" href="' + b.url + '">' + b.title + '</a> <a id="' + b.key + '" class="delete">x</a></li>';
-		        x$('#bookmarks ul').bottom(tmpl)
-		    });		
-			// bind deletes
-			x$('.delete').touchstart(function(e) {
-				bookmarks.remove({key:x$(this).attr('id')}); // FIXME lawnchair should accept callback for remove
-				x$('#bookmarks ul')[0].removeChild(x$(this)[0].parentNode)
+	// helper for rendering: GUESS! 
+	var renderBookmarks = function() {
+		// remove all bookmarks
+		// FIXME xui remove should fails on undefined and not working on table elements
+		try { 
+			// x$('#bookmarks table tr').remove() 
+			x$('#bookmarks table tr').each(function(e){
+				x$('#bookmarks table')[0].removeChild(x$(e)[0]);
 			});
-			// rebind all the anchors to touchstarts
-			x$('a').each(function(){
-				var a = x$(this), u = a.attr('href').toString();
-				if (u.match(/http/)) {
-					a.touchstart(function(e){
-						e.preventDefault();
-						BackButton.reset(); // preserving the back button in android
-						window.location = u;
-						return false;
-					});
-				};
-			});
+		} catch(e) {
+			console.log(e);
 		};
-		
+		// add all bookmarks from lawnchair to the dom
+		bookmarks.each(function(b){
+			var tmpl = '<tr>';
+			tmpl += '<td><a class="bookmark" href="' + b.url + '">' + b.url + '</a></td>';
+			tmpl += '<td><a id="' + b.key + '" class="delete">x</a></td>';
+			tmpl += '</tr>';
+	        x$('#bookmarks table').bottom(tmpl)
+	    });		
+		// bind deletes
+		x$('.delete').touchstart(function(e) {
+			// FIXME lawnchair should accept callback for remove
+			if (confirm('are you sure you want to delete this bookmark?')) {
+				bookmarks.remove({key:x$(this).attr('id')}); 
+				x$('#bookmarks table')[0].removeChild(x$(this)[0].parentNode.parentNode)
+			}
+		});
+		// rebind all the anchors to touchstarts
+		x$('a').each(function(){
+			var a = x$(this), u = a.attr('href').toString();
+			if (u.match(/http/)) {
+				a.touchstart(function(e){
+					e.preventDefault();
+					BackButton.reset(); // preserving the back button in android
+					window.location = u;
+					return false;
+				});
+			};
+		});
+	};
+	
+	var init = function() {
 		// title goes home
 		x$('h1').touchstart(function(){
 			level = 0;
 			tweenTo(level);
 		});
-     
+		
 		// attach navigation to the bookmarks view
 	   	x$('#show-bookmarks a').touchstart(function(e){
 			e.preventDefault();
@@ -98,7 +118,8 @@ x$(window).load(function(){
 			return false;
 		});
 		
-		x$('#specs a').touchstart(function(e){
+		// clicking specs will load..the specs
+		x$('#show-specs a').touchstart(function(e){
 			e.preventDefault();
 			window.location = 'mobile-spec/index.html';
 			return false;
@@ -124,33 +145,32 @@ x$(window).load(function(){
 				}
 			});
 		};
-
+		
 		// save bookmark functionality
 		x$('#new-bookmark form').on('submit', function(e){
 			e.preventDefault();
-			var title = x$('#new-bookmark-title')[0].value
-			  ,	url = x$('#new-bookmark-url')[0].value
-			  ;
-	        if (title == '' || url == '') {
-				alert('title and/or url not complete!')
-			} else {
-				bookmarks.save({title:title, url:url}, function() {
-					renderBookmarks();
-					
-					x$('#new-bookmark-title')[0].value = '';
-					x$('#new-bookmark-url')[0].value = 'http://';
-					
-					tweenTo(0);
-				}); 
-			} 
+			saveBookmark();
 			return false;
 		});
-	
-		renderBookmarks();
 		
-	/// --- end device ready	
-	});
-});	
+		// render bookmarks on init
+		renderBookmarks();
+	};
+	
+	return {
+		run: function() {
+			// prevent user touch events
+			x$('body')[0].addEventListener('touchstart', function(e){ if (e.target.tagName != 'INPUT') { e.preventDefault() }}, true);
+
+			// wait until the app loads to get magical
+			x$(window).load(function(){
+				x$(document).on('deviceready', init);
+			});
+		}
+	}
+};
+
+App().run();
 </script>
 </body>
 </html>
